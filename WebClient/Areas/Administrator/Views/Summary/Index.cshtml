@@ -3,37 +3,121 @@
     Layout = "_LayoutHome";
     ViewData["Title"] = "SummaryCategoreis";
 }
-
+<style>
+    div>div>div>div>svg>g>text{
+        font-size:20px;
+    }
+</style>
 <div class="table-area">
-    <h1>Thống kê % sản phẩm thuộc danh mục được mua!</h1>
-    <div id="piechart" style="width: 900px; height: 500px;"></div>
+    <h1>BIỂU ĐỒ THỐNG KÊ</h1>
+    <form action="/administrator/summary">
+        <input value="@Context.Request.Query["FROM_DATE"]" type="date" name="FROM_DATE" maxlength="10" placeholder="Từ ngày"/>
+        <input value="@Context.Request.Query["TO_DATE"]" type="date" name="TO_DATE" maxlength="10" placeholder="Đến ngày"/>
+        <button>Lọc dữ liệu</button>
+    </form>
+    <div id="piechart" style="width: 100%; height: 500px;"></div>
+    <div id="piechart_process" style="width: 100%; height: 500px;"></div>
+    <div id="chart_div" style="width: 100%; height: 500px;"></div>
 </div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.setOnLoadCallback(drawChart);
 
-      function drawChart() {
-          var a = [['Task', 'Hours per Day']];
-          var xhr = new XMLHttpRequest();
-          xhr.open('GET', '/administrator/summary/summaryc');
-          xhr.send();
-          xhr.onload = function () {
-              var o = JSON.parse(this.response);
-              for (var i = o.length - 1; i >= 0; i--) {
-                  a.push([o[i]['name'], o[i]['total']]);
-              }
-              var data = google.visualization.arrayToDataTable(a);
-              var options = {
-                  title: 'Category Summary',
-                  is3D: true,
-              };
-              var chart = new google.visualization.PieChart(piechart);
+    function drawChart() {
+        var a = [['Task', 'Hours per Day']];
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/administrator/summary/GetSummaryCategoriesByTime');
+        xhr.send();
+        xhr.onload = function () {
+            var o = JSON.parse(this.response);
+            for (var i = o.length - 1; i >= 0; i--) {
+                a.push([o[i]['name'], o[i]['total']]);
+            }
+            var data = google.visualization.arrayToDataTable(a);
+            var options = {
+                title: 'Thống kê doanh mục sản phẩm bán chạy',
+                is3D: true,
+            };
+            var chart = new google.visualization.PieChart(piechart);
 
-              chart.draw(data, options);
-          }
-      }
+            chart.draw(data, options);
+        }
+    }
 </script>
+<script type="text/javascript">
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.setOnLoadCallback(drawChart);
 
+    function drawChart() {
+        var a = [['Task', 'Hours per Day']];
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/administrator/summary/RPT_TrangThaiDonHang');
+        xhr.send();
+        xhr.onload = function () {
+            var o = JSON.parse(this.response);
+            for (var i = o.length - 1; i >= 0; i--) {
+                a.push([o[i]['name'], o[i]['total']]);
+            }
+            var data = google.visualization.arrayToDataTable(a);
+            var options = {
+                title: 'Thống kê trạng thái đơn hàng',
+                is3D: true,
+            };
+            var chart = new google.visualization.PieChart(document.getElementById('piechart_process'));
+
+            chart.draw(data, options);
+        }
+    }
+</script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.setOnLoadCallback(drawVisualization);
+
+    function drawVisualization() {
+        var a = [['Month', 'Năm hiện tại', 'Năm trước đó', 'Trung bình 2 năm']];
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/administrator/summary/Rpt_DanhThuHaiNamGanNhat');
+        xhr.send();
+        xhr.onload = function () {
+            var o = JSON.parse(this.response);
+            //for (var i = 1; i <= o.length; i++) {
+            for (var i = o.length - 1; i >= 0; i--) {
+                a.push([o[i]['month'], o[i]['currenT_YEAR'], o[i]['lasT_YEAR'], o[i]['average']]);
+            }
+            var data = google.visualization.arrayToDataTable(a);
+            var options = {
+                title: 'Thống kê doanh thu hai năm gần đây nhất',
+                vAxis: { title: 'Đơn vị: VNĐ' },
+                hAxis: { title: 'Tháng' },
+                seriesType: 'bars',
+                series: { 2: { type: 'line' } }
+            };
+            var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+        // Some raw data (not necessarily accurate)
+        //var data = google.visualization.arrayToDataTable([
+        //    ['Month', 'Ecuador', 'Madagascar', 'Rwanda', 'Average'],
+        //    ['2004/05', 938, 522, 450, 614.6],
+        //    ['2005/06', 1120, 599, 288, 682],
+        //    ['2006/07', 1167, 587, 397, 623],
+        //    ['2007/08', 1110, 615, 215, 609.4],
+        //    ['2008/09', 691, 629, 366, 569.6]
+        //]);
+
+        //var options = {
+        //    title: 'Thống kê doanh thu theo năm',
+        //    vAxis: { title: 'Cups' },
+        //    hAxis: { title: 'Month' },
+        //    seriesType: 'bars',
+        //    series: { 3: { type: 'line' } }
+        //};
+
+        //var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+        //chart.draw(data, options);
+    }
+</script>
 

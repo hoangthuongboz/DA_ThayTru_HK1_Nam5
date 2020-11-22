@@ -9,15 +9,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class SummaryController : BaseController
     {
         // GET: api/<SummaryController>
         [HttpGet]
-        public List<Summary> Get()
+        public string Get()
         {
-            return app.Summary.GetSummaryCategories();
+            return "value";
         }
 
         // GET api/<SummaryController>/5
@@ -25,6 +25,24 @@ namespace WebAPI.Controllers
         public string Get(int id)
         {
             return "value";
+        }
+
+        [HttpGet]
+        public List<Summary_RPT> RPT_DoanhThuHaiNamGanNhat()
+        {
+            return app.SummaryRpt.RPT_DoanhThuHaiNamGanNhat();
+        }
+
+        [HttpPost]
+        public List<Summary> GetAllByTimeCategories([FromBody] Summary input)
+        {
+            return app.Summary.GetSummaryCategories(input);
+        }
+
+        [HttpPost]
+        public List<Summary> RPT_TrangThaiDonHang([FromBody] Summary input)
+        {
+            return app.Summary.RPT_TrangThaiDonHang(input);
         }
 
         // POST api/<SummaryController>

@@ -26,6 +26,20 @@ namespace WebClient.Models
                 return null;
             }
         }
+        protected static List<T> Gets<T>(string requestUri, T obj)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = uri;
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpResponseMessage responseMessage = client.PostAsync<T>(requestUri, obj, new JsonMediaTypeFormatter()).Result;
+                if (responseMessage.IsSuccessStatusCode)
+                {
+                    return responseMessage.Content.ReadAsAsync<List<T>>().Result;
+                }
+                return null;
+            }
+        }
         protected static T Get<T>(string requestUri)
         {
             using (HttpClient client = new HttpClient())

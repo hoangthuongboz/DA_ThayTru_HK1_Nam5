@@ -11,7 +11,7 @@ namespace WebClient.Areas.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            return Redirect("/administrator/summary");
         }
     }
 }

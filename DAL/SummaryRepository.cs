@@ -16,13 +16,28 @@ namespace DAL
         {
             return new Summary
             {
-                Name = (string)reader["CategoryName"],
-                Total = (int)reader["Total"]
+                Name = reader["Name"] != DBNull.Value? (string)reader["Name"] : null,
+                Total = reader["Total"] != DBNull.Value ? (int?)reader["Total"] : 0
             };
         }
-        public List<Summary> GetSummaryCategories()
+        public List<Summary> GetSummaryCategories(Summary obj)
         {
-            return Query("GetSummaryCategories");
+            Parameter[] parameters =
+            {
+                new Parameter { Name = "@FROMDATE", Value = obj.FROM_DATE.ToString(), DbType = DbType.String},
+                new Parameter { Name = "@TODATE", Value = obj.TO_DATE.ToString(), DbType = DbType.String}
+            };
+            return Query("GetSummaryCategories", parameters);
+        }
+
+        public List<Summary> RPT_TrangThaiDonHang(Summary obj)
+        {
+            Parameter[] parameters =
+            {
+                new Parameter { Name = "@FROMDATE", Value = obj.FROM_DATE.ToString(), DbType = DbType.String},
+                new Parameter { Name = "@TODATE", Value = obj.TO_DATE.ToString(), DbType = DbType.String}
+            };
+            return Query("RPT_TrangThaiDonHang", parameters);
         }
     }
 }

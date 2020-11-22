@@ -13,16 +13,29 @@ namespace WebClient.Areas.Administrator.Controllers
     public class SummaryController : Controller
     {
         SummaryAppService app = new SummaryAppService();
+        static Summary summaryModel = new Summary();
         // GET: SummaryController
-        public ActionResult Index()
+        public ActionResult Index(Summary obj)
         {
+            summaryModel = obj;
             return View();
         }
-
-        public IActionResult SummaryC()
+        [HttpGet]
+        public IActionResult Rpt_DanhThuHaiNamGanNhat()
         {
-            return Json(app.GetSummaryCategories());
+            return Json(app.RPT_DoanhThuHaiNamGanNhat());
         }
+        [HttpPost]
+        public IActionResult GetSummaryCategoriesByTime()
+        {
+            return Json(app.GetSummaryCategoriesByTime(summaryModel));
+        }
+        [HttpPost]
+        public IActionResult RPT_TrangThaiDonHang()
+        {
+            return Json(app.RPT_TrangThaiDonHang(summaryModel));
+        }
+        
         // GET: SummaryController/Details/5
         public ActionResult Details(int id)
         {

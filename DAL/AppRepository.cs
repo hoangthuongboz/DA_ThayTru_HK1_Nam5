@@ -20,6 +20,18 @@ namespace DAL
         OrderItemRepository orderItem;
         OrderRepository order;
         SummaryRepository summary;
+        SummaryRptRepository summaryRpt;
+        public SummaryRptRepository SummaryRpt
+        {
+            get
+            {
+                if (summaryRpt is null)
+                {
+                    summaryRpt = new SummaryRptRepository(connection);
+                }
+                return summaryRpt;
+            }
+        }
         public SummaryRepository Summary
         {
             get
